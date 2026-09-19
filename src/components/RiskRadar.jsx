@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { scanRisks } from '../services/legalAiService.js';
 import { scoreRisk, severityToBadge } from '../utils/riskScorer.js';
 import RiskBadge from './RiskBadge.jsx';
+import RiskMatrixChart from './RiskMatrixChart.jsx';
+import RedlineCopilot from './RedlineCopilot.jsx';
 
 function RiskGauge({ score, level }) {
   const radius = 54;
@@ -33,7 +35,7 @@ function RiskGauge({ score, level }) {
   );
 }
 
-function RiskFlagCard({ flag, index }) {
+function RiskFlagCard({ flag, index, onOpenRedline, documentText }) {
   const [expanded, setExpanded] = useState(false);
   const badge = severityToBadge(flag.severity);
   const borderColor = { crimson: 'var(--risk-crimson)', amber: 'var(--risk-amber)', emerald: 'var(--risk-emerald)' }[badge];
@@ -46,6 +48,7 @@ function RiskFlagCard({ flag, index }) {
       <button
         id={`risk-flag-${index}`}
         onClick={() => setExpanded(!expanded)}
+        aria-expanded={expanded}
         style={{ width: '100%', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', gap: '12px' }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1, minWidth: 0 }}>
@@ -72,8 +75,8 @@ function RiskFlagCard({ flag, index }) {
               "{flag.directQuote}"
             </blockquote>
           )}
-          <div style={{ marginTop: '12px' }}>
-            <p style={{ fontSize: '0.875rem', lineHeight: 1.7, marginBottom: '12px' }}>
+          <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <p style={{ fontSize: '0.875rem', lineHeight: 1.7 }}>
               <strong style={{ color: 'var(--text-primary)' }}>Why it's risky: </strong>
               {flag.explanation}
             </p>
@@ -84,6 +87,16 @@ function RiskFlagCard({ flag, index }) {
                 </p>
               </div>
             )}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '6px' }}>
+              <button
+                className="btn btn-secondary btn-sm"
+                onClick={() => onOpenRedline(flag)}
+                style={{ borderColor: 'var(--brand-primary)', color: 'var(--brand-primary)' }}
+                aria-label={`Generate AI Redline Counter-Clause for ${flag.type}`}
+              >
+                ⚡ Generate AI Redline Counter-Clause
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -95,6 +108,7 @@ function RiskRadar({ documentText, onRiskData }) {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [activeRedlineFlag, setActiveRedlineFlag] = useState(null);
 
   // Deterministic pre-score
   const preScore = documentText ? scoreRisk(documentText) : null;
@@ -161,13 +175,24 @@ function RiskRadar({ documentText, onRiskData }) {
         </div>
       )}
 
+      {/* 4-Dimension Risk Matrix Chart */}
+      {documentText && (
+        <RiskMatrixChart riskData={result} documentText={documentText} />
+      )}
+
       {/* Results */}
       {result && !loading && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <h4 style={{ color: 'var(--text-secondary)' }}>{result.flags?.length || 0} Risk Flags Found</h4>
 
           {result.flags?.map((flag, i) => (
-            <RiskFlagCard key={i} flag={flag} index={i} />
+            <RiskFlagCard
+              key={i}
+              flag={flag}
+              index={i}
+              onOpenRedline={(f) => setActiveRedlineFlag(f)}
+              documentText={documentText}
+            />
           ))}
 
           {/* Missing Protections */}
@@ -185,6 +210,15 @@ function RiskRadar({ documentText, onRiskData }) {
             </div>
           )}
         </div>
+      )}
+
+      {/* AI Redline Counter-Clause Copilot Modal */}
+      {activeRedlineFlag && (
+        <RedlineCopilot
+          riskFlag={activeRedlineFlag}
+          documentText={documentText}
+          onClose={() => setActiveRedlineFlag(null)}
+        />
       )}
     </div>
   );

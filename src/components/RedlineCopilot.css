@@ -1,0 +1,205 @@
+/* ============================================================
+   LexiGuard AI — Redline Copilot Modal Styles
+   ============================================================ */
+
+.redline-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1500;
+  background: rgba(5, 8, 16, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.redline-card {
+  width: 100%;
+  max-width: 760px;
+  max-height: 88vh;
+  background: var(--bg-secondary);
+  border: 1px solid var(--glass-border-hover);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.7);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.redline-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.redline-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.redline-badge-icon {
+  font-size: 1.75rem;
+  background: hsla(217, 91%, 60%, 0.12);
+  padding: 6px 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid hsla(217, 91%, 60%, 0.3);
+}
+
+.redline-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.redline-sub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.redline-flag-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--glass-bg);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  margin: 16px 0 12px;
+}
+
+.redline-flag-type {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.redline-flag-ref {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.redline-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.redline-body {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-right: 4px;
+}
+
+.redline-comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 680px) {
+  .redline-comparison-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.redline-box {
+  background: var(--glass-bg);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.redline-box-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.redline-box-original {
+  border-color: hsla(0, 85%, 58%, 0.25);
+  background: hsla(0, 85%, 58%, 0.03);
+}
+
+.redline-box-proposed {
+  border-color: hsla(142, 70%, 45%, 0.25);
+  background: hsla(142, 70%, 45%, 0.03);
+}
+
+.redline-box-text {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  margin: 0;
+  border-radius: var(--radius-sm);
+  padding: 10px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.redline-box-hint {
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+
+.redline-leverage-box {
+  background: hsla(217, 91%, 60%, 0.08);
+  border: 1px solid hsla(217, 91%, 60%, 0.2);
+  border-radius: var(--radius-sm);
+  padding: 10px;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.redline-leverage-box strong {
+  color: var(--brand-primary);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.redline-changes {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+}
+
+.redline-changes-title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.redline-changes-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.78rem;
+  color: var(--risk-emerald);
+}
+
+.redline-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-subtle);
+  margin-top: 8px;
+}

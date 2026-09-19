@@ -499,6 +499,54 @@ Return ONLY valid JSON matching brief schema.`;
   return generateJSON(prompt, () => buildDynamicBrief(sanitized, riskData));
 }
 
+export async function generateRedlineClause(riskFlag, documentText) {
+  const { sanitized } = sanitizePII(documentText || '');
+  const type = riskFlag?.type || 'RISK_FLAG';
+  const origQuote = riskFlag?.directQuote || 'Original contract provision';
+
+  const prompt = `You are a legal contract negotiation expert. Redline the following risky contract clause into a balanced, fair counter-proposal.
+
+RISK CLAUSE TYPE: ${type}
+SECTION REFERENCE: ${riskFlag?.sectionRef || 'Section'}
+ORIGINAL QUOTE: "${origQuote}"
+RISK EXPLANATION: ${riskFlag?.explanation || ''}
+
+Return ONLY valid JSON:
+{
+  "originalQuote": "string",
+  "proposedClause": "string — balanced legal counter-clause",
+  "riskExplanation": "string",
+  "negotiationStrategy": "string — tactics and arguments to present to the counterparty",
+  "keyChanges": ["string — bullet points of changes made"]
+}`;
+
+  const fallback = () => {
+    let proposed = 'This Agreement shall automatically expire at the end of the initial term, unless both parties execute a mutual written extension at least thirty (30) days prior to expiration.';
+    let changes = ['Converted automatic renewal into explicit mutual opt-in', 'Reduced cancellation notice window to 30 days'];
+    let strat = 'Point out that automatic renewals create administrative traps and request standard 30-day explicit renewal terms.';
+
+    if (type.includes('INDEMNIFY') || type.includes('INDEMNIFICATION')) {
+      proposed = 'Each party agrees to indemnify, defend, and hold harmless the other party against direct third-party losses up to an aggregate total limit of total fees paid under this Agreement during the preceding 12 months.';
+      changes = ['Capped maximum indemnity exposure to 12 months fees paid', 'Carved out indirect and consequential damages'];
+      strat = 'Argue that uncapped indemnification is commercially uninsurable and propose a standard 12-month fee cap.';
+    } else if (type.includes('AMENDMENT') || type.includes('MODIFICATION')) {
+      proposed = 'No modification, amendment, or waiver of any provision of this Agreement shall be effective unless in writing and signed by authorized representatives of both parties.';
+      changes = ['Removed unilateral amendment right', 'Required mutual signed written consent'];
+      strat = 'Emphasize that contract stability requires mutual consent for any price or terms changes.';
+    }
+
+    return {
+      originalQuote: origQuote,
+      proposedClause: proposed,
+      riskExplanation: riskFlag?.explanation || 'Risky clause requiring redline adjustment.',
+      negotiationStrategy: strat,
+      keyChanges: changes
+    };
+  };
+
+  return generateJSON(prompt, fallback);
+}
+
 export async function extractTextFromImage(base64Image, mimeType) {
   const prompt = `Extract text from legal document image. Return JSON { "text": "string", "documentType": "string", "pageCount": 1 }`;
 

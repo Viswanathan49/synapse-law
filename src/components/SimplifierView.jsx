@@ -1,11 +1,21 @@
 import React, { useState } from 'react';
 import { simplifyDocument } from '../services/legalAiService.js';
 import RiskBadge from './RiskBadge.jsx';
+import VoiceBriefPlayer from './VoiceBriefPlayer.jsx';
 
 const MODES = [
   { id: 'clauses', label: '⚖️ Clause Breakdown', desc: 'Side-by-side legal vs plain English' },
   { id: 'executive', label: '📊 Executive Summary', desc: 'Key facts for decision makers' },
   { id: 'eli5', label: '🧒 ELI5 Mode', desc: 'Explain like I\'m 5' },
+];
+
+const LANGUAGES = [
+  { code: 'en', label: '🇺🇸 English' },
+  { code: 'es', label: '🇪🇸 Spanish (Español)' },
+  { code: 'fr', label: '🇫🇷 French (Français)' },
+  { code: 'de', label: '🇩🇪 German (Deutsch)' },
+  { code: 'hi', label: '🇮🇳 Hindi (हिन्दी)' },
+  { code: 'ja', label: '🇯🇵 Japanese (日本語)' },
 ];
 
 function LoadingSkeleton() {
@@ -20,6 +30,7 @@ function LoadingSkeleton() {
 
 function SimplifierView({ documentText }) {
   const [mode, setMode] = useState('clauses');
+  const [language, setLanguage] = useState('en');
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -29,7 +40,7 @@ function SimplifierView({ documentText }) {
     setError(null);
     setResult(null);
     try {
-      const data = await simplifyDocument(documentText, mode);
+      const data = await simplifyDocument(documentText, mode, language);
       setResult(data);
     } catch (err) {
       setError(err.message);
@@ -40,15 +51,33 @@ function SimplifierView({ documentText }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      {/* Mode Selector */}
+      {/* Mode Selector & Language Bar */}
       <div className="glass-card" style={{ padding: '20px' }}>
-        <h4 style={{ marginBottom: '14px', color: 'var(--text-secondary)' }}>Analysis Mode</h4>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '10px' }}>
+          <h4 style={{ color: 'var(--text-secondary)' }}>Analysis Mode</h4>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Target Language:</span>
+            <select
+              className="select"
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              style={{ width: 'auto', padding: '4px 10px', fontSize: '0.8125rem' }}
+              aria-label="Select Target Translation Language"
+            >
+              {LANGUAGES.map(l => (
+                <option key={l.code} value={l.code}>{l.label}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
           {MODES.map(m => (
             <button
               key={m.id}
               id={`simplify-mode-${m.id}`}
               onClick={() => setMode(m.id)}
+              aria-label={`Select ${m.label} mode`}
               style={{
                 padding: '14px',
                 borderRadius: 'var(--radius-md)',
@@ -72,7 +101,7 @@ function SimplifierView({ documentText }) {
           onClick={handleAnalyze}
           disabled={loading || !documentText}
         >
-          {loading ? <><span className="spinner" /> Simplifying...</> : '✨ Simplify Document'}
+          {loading ? <><span className="spinner" /> Simplifying & Translating...</> : '✨ Simplify Document'}
         </button>
       </div>
 
@@ -93,6 +122,11 @@ function SimplifierView({ documentText }) {
 
       {result && !loading && (
         <div className="animate-fadeInUp" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          {/* Executive Voice Briefing Component */}
+          <VoiceBriefPlayer
+            summaryText={result.summary}
+            topRisks={result.clauses?.filter(c => c.riskNote)}
+          />
           {/* Document Header */}
           <div className="glass-card" style={{ padding: '20px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>

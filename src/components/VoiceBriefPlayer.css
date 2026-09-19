@@ -1,0 +1,124 @@
+/* ============================================================
+   LexiGuard AI — Voice Brief Player Styles
+   ============================================================ */
+
+.voice-player-card {
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+}
+
+.voice-player-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.voice-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.voice-icon-wrap {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: hsla(217, 91%, 60%, 0.12);
+  border: 1px solid hsla(217, 91%, 60%, 0.3);
+  border-radius: var(--radius-md);
+}
+
+.voice-icon {
+  font-size: 1.25rem;
+  z-index: 1;
+}
+
+.voice-pulse-ring {
+  position: absolute;
+  inset: -4px;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--brand-primary);
+  animation: pulseRing 1.5s infinite ease-in-out;
+}
+
+@keyframes pulseRing {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.15); opacity: 0; }
+}
+
+.voice-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.voice-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.voice-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.voice-rate-picker {
+  display: flex;
+  background: var(--bg-tertiary);
+  padding: 2px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+}
+
+.voice-rate-btn {
+  padding: 2px 8px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.voice-rate-btn.active {
+  background: var(--brand-primary);
+  color: white;
+}
+
+.voice-btn-play {
+  box-shadow: 0 4px 12px var(--brand-primary-glow);
+}
+
+.voice-waveform {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 20px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.wave-bar {
+  width: 4px;
+  height: 100%;
+  background: var(--brand-primary);
+  border-radius: var(--radius-full);
+  animation: wavePulse 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes wavePulse {
+  0% { height: 4px; opacity: 0.4; }
+  100% { height: 18px; opacity: 1; }
+}
