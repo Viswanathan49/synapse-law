@@ -8,6 +8,27 @@ import { extractTextFromImage } from '../services/legalAiService.js';
  * DocumentUploader — Multi-format document input component
  * Supports: PDF, DOCX, Images (via Gemini Vision), text paste, and pre-loaded docs
  */
+
+/** Maximum allowed file size: 20 MB */
+const MAX_FILE_SIZE_BYTES = 20 * 1024 * 1024;
+
+/** Maximum characters for direct text paste to prevent DoS */
+const MAX_PASTE_CHARS = 500_000;
+
+/** Allowed MIME types — explicit whitelist for security */
+const ALLOWED_MIME_TYPES = new Set([
+  'application/pdf',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'image/png',
+  'image/jpeg',
+  'image/webp',
+  'image/tiff',
+  'image/gif',
+]);
+
+/** Allowed file extensions — enforced alongside MIME type */
+const ALLOWED_EXTENSIONS = new Set(['pdf', 'docx', 'png', 'jpg', 'jpeg', 'webp', 'tiff', 'gif']);
+
 function DocumentUploader({ onDocumentLoad }) {
   const [dragging, setDragging] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -19,9 +40,38 @@ function DocumentUploader({ onDocumentLoad }) {
   const fileInputRef = useRef(null);
   const mockDocs = getAllMockDocuments();
 
+  /**
+   * Validates a file against size and type restrictions before parsing.
+   * @param {File} file
+   * @returns {string|null} Error message, or null if valid
+   */
+  function validateFile(file) {
+    if (!file) return 'No file selected.';
+
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      return `File is too large (${formatFileSize(file.size)}). Maximum allowed size is 20 MB.`;
+    }
+
+    const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
+    const mime = file.type.toLowerCase();
+
+    if (!ALLOWED_EXTENSIONS.has(ext) && !ALLOWED_MIME_TYPES.has(mime)) {
+      return `Unsupported file type "${ext || file.type}". Please upload a PDF, DOCX, or image file.`;
+    }
+
+    return null;
+  }
+
   async function processFile(file) {
     setError(null);
     setPiiInfo(null);
+
+    const validationError = validateFile(file);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     setLoading(true);
     setLoadingMsg(`Parsing ${file.name}...`);
 
@@ -79,6 +129,10 @@ function DocumentUploader({ onDocumentLoad }) {
 
   function handlePasteSubmit() {
     if (!pasteText.trim()) return;
+    if (pasteText.length > MAX_PASTE_CHARS) {
+      setError(`Pasted text exceeds the maximum of ${MAX_PASTE_CHARS.toLocaleString()} characters. Please trim your document.`);
+      return;
+    }
     const { sanitized, redactedCount, types } = sanitizePII(pasteText);
     if (redactedCount > 0) setPiiInfo({ redactedCount, types });
 

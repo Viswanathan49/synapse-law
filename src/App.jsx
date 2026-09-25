@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import LandingPage from './components/LandingPage.jsx';
-import LegalDashboard from './components/LegalDashboard.jsx';
 import AuthModal from './components/AuthModal.jsx';
 import TransitionOverlay from './components/TransitionOverlay.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
 import { authService } from './services/authService.js';
+
+const LegalDashboard = lazy(() => import('./components/LegalDashboard.jsx'));
 
 function App() {
   const [view, setView] = useState('landing'); // 'landing' | 'app'
@@ -88,13 +89,21 @@ function App() {
             currentUser={currentUser}
           />
         ) : (
-          <LegalDashboard
-            onBackToLanding={() => setView('landing')}
-            currentUser={currentUser}
-            onOpenAuthModal={() => setIsAuthModalOpen(true)}
-            onLogout={handleLogout}
-            initialTab={activeTab}
-          />
+          <Suspense
+            fallback={
+              <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div className="spinner" style={{ width: '40px', height: '40px' }} />
+              </div>
+            }
+          >
+            <LegalDashboard
+              onBackToLanding={() => setView('landing')}
+              currentUser={currentUser}
+              onOpenAuthModal={() => setIsAuthModalOpen(true)}
+              onLogout={handleLogout}
+              initialTab={activeTab}
+            />
+          </Suspense>
         )}
       </div>
     </ErrorBoundary>

@@ -6,6 +6,20 @@ export default defineConfig({
   optimizeDeps: {
     include: ['pdfjs-dist'],
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-pdf': ['pdfjs-dist'],
+          'vendor-exports': ['jspdf', 'html2canvas', 'pptxgenjs'],
+          'vendor-ai': ['@google/generative-ai'],
+          'vendor-parser': ['mammoth', 'diff-match-patch'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1000,
+  },
   test: {
     environment: 'jsdom',
     setupFiles: ['./src/tests/setup.js'],

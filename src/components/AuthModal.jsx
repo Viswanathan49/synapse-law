@@ -160,6 +160,8 @@ function AuthModal({ isOpen, onClose, onLoginSuccess }) {
                 placeholder="name@firm.com"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
+                maxLength={254}
+                autoComplete="email"
                 required
               />
             </div>
@@ -181,6 +183,8 @@ function AuthModal({ isOpen, onClose, onLoginSuccess }) {
                 placeholder="••••••••••••"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
+                maxLength={128}
+                autoComplete="current-password"
               />
             </div>
 
@@ -219,6 +223,8 @@ function AuthModal({ isOpen, onClose, onLoginSuccess }) {
                 placeholder="Attorney / Counsel Name"
                 value={name}
                 onChange={e => setName(e.target.value)}
+                maxLength={100}
+                autoComplete="name"
                 required
               />
             </div>
@@ -231,6 +237,8 @@ function AuthModal({ isOpen, onClose, onLoginSuccess }) {
                 placeholder="you@company.com"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
+                maxLength={254}
+                autoComplete="email"
                 required
               />
             </div>
@@ -258,6 +266,8 @@ function AuthModal({ isOpen, onClose, onLoginSuccess }) {
                   placeholder="e.g. Legal Corp"
                   value={company}
                   onChange={e => setCompany(e.target.value)}
+                  maxLength={120}
+                  autoComplete="organization"
                 />
               </div>
             </div>

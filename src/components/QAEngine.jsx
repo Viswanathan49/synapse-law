@@ -32,10 +32,11 @@ function QAEngine({ documentText }) {
   const [error, setError] = useState(null);
 
   async function handleAsk(q = question) {
-    if (!q.trim() || !documentText) return;
+    const trimmed = (q || '').trim().slice(0, 500);
+    if (!trimmed || !documentText || loading) return;
     setLoading(true);
     setError(null);
-    const currentQ = q;
+    const currentQ = trimmed;
     try {
       const data = await answerQuestion(documentText, currentQ);
       setAnswers(prev => [{ question: currentQ, ...data, id: Date.now() }, ...prev]);
@@ -89,6 +90,8 @@ function QAEngine({ documentText }) {
             onKeyDown={handleKeyDown}
             placeholder="Ask a question about this document..."
             disabled={loading || !documentText}
+            maxLength={500}
+            autoComplete="off"
           />
           <button
             id="qa-submit-btn"
