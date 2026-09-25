@@ -149,6 +149,7 @@ function LegalDashboard({ onBackToLanding, currentUser, onOpenAuthModal, onLogou
               <button
                 className="btn btn-ghost btn-sm"
                 onClick={onLogout}
+                aria-label="Switch Vault User or Logout"
                 title="Switch Vault User / Logout"
                 style={{ fontSize: '0.75rem', padding: '2px 6px', color: 'var(--text-muted)' }}
               >
@@ -159,6 +160,7 @@ function LegalDashboard({ onBackToLanding, currentUser, onOpenAuthModal, onLogou
             <button
               className="btn btn-primary btn-sm"
               onClick={onOpenAuthModal}
+              aria-label="Open Vault Sign In"
             >
               🔐 Vault Sign In
             </button>
@@ -215,7 +217,7 @@ function LegalDashboard({ onBackToLanding, currentUser, onOpenAuthModal, onLogou
         </nav>
 
         {/* Content Area */}
-        <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+        <main id="main-content" tabIndex="-1" style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
           {/* Tab Label */}
           <div style={{ padding: '16px 24px 0', borderBottom: '1px solid var(--border-subtle)', background: 'var(--bg-primary)', flexShrink: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', paddingBottom: '16px' }}>
@@ -271,7 +273,7 @@ function LegalDashboard({ onBackToLanding, currentUser, onOpenAuthModal, onLogou
               </div>
             )}
           </div>
-        </div>
+        </main>
       </div>
       <SavedMemoryModal
         isOpen={isMemoryModalOpen}

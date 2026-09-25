@@ -9,6 +9,18 @@ function SavedMemoryModal({ isOpen, onClose, user, onLoadMemoryToWorkspace }) {
   const [isBatchOpen, setIsBatchOpen] = useState(false);
 
   useEffect(() => {
+    function handleKeyDown(e) {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    }
+    if (isOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isOpen, onClose]);
+
+  useEffect(() => {
     if (isOpen && user) {
       loadUserMemories();
     }

@@ -14,6 +14,18 @@ function AuthModal({ isOpen, onClose, onLoginSuccess }) {
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  React.useEffect(() => {
+    function handleKeyDown(e) {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    }
+    if (isOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const demoUsers = authService.getDemoUsers();
@@ -66,18 +78,18 @@ function AuthModal({ isOpen, onClose, onLoginSuccess }) {
   }
 
   return (
-    <div className="auth-modal-backdrop animate-fadeIn">
+    <div className="auth-modal-backdrop animate-fadeIn" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
       <div className="auth-modal-card glass-card animate-fadeInUp">
         {/* Modal Header */}
         <div className="auth-modal-header">
           <div className="auth-logo-badge">
             <span className="auth-logo-icon">⚖️</span>
             <div>
-              <div className="auth-logo-title">LexiGuard Vault Login</div>
+              <div className="auth-logo-title" id="auth-modal-title">LexiGuard Vault Login</div>
               <div className="auth-logo-sub">Client-Side Encrypted & PII scrubbed</div>
             </div>
           </div>
-          <button className="auth-close-btn" onClick={onClose} title="Close">✕</button>
+          <button className="auth-close-btn" onClick={onClose} aria-label="Close authentication modal" title="Close">✕</button>
         </div>
 
         {/* Security Alert Banner */}
@@ -87,20 +99,26 @@ function AuthModal({ isOpen, onClose, onLoginSuccess }) {
         </div>
 
         {/* Tabs */}
-        <div className="auth-tabs">
+        <div className="auth-tabs" role="tablist" aria-label="Authentication modes">
           <button
+            role="tab"
+            aria-selected={activeTab === 'demo'}
             className={`auth-tab ${activeTab === 'demo' ? 'active' : ''}`}
             onClick={() => { setActiveTab('demo'); setError(''); }}
           >
             ⚡ Quick Demo Access
           </button>
           <button
+            role="tab"
+            aria-selected={activeTab === 'login'}
             className={`auth-tab ${activeTab === 'login' ? 'active' : ''}`}
             onClick={() => { setActiveTab('login'); setError(''); }}
           >
             🔑 Vault Login
           </button>
           <button
+            role="tab"
+            aria-selected={activeTab === 'signup'}
             className={`auth-tab ${activeTab === 'signup' ? 'active' : ''}`}
             onClick={() => { setActiveTab('signup'); setError(''); }}
           >

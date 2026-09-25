@@ -5,6 +5,18 @@ import './BatchComparatorModal.css';
 function BatchComparatorModal({ isOpen, onClose, user, onLoadDocument }) {
   const [copiedCSV, setCopiedCSV] = useState(false);
 
+  React.useEffect(() => {
+    function handleKeyDown(e) {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    }
+    if (isOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isOpen, onClose]);
+
   if (!isOpen || !user) return null;
 
   const memories = authService.getSavedMemories(user.id);

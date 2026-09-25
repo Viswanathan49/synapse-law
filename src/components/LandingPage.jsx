@@ -148,8 +148,9 @@ function LandingPage({ onEnterApp, onOpenAuthModal, currentUser, onSelectFeature
         </div>
       </nav>
 
-      {/* ── Hero ── */}
-      <section className="hero" ref={heroRef} id="hero">
+      <main id="main-content" tabIndex="-1">
+        {/* ── Hero ── */}
+        <section className="hero" ref={heroRef} id="hero">
         <div className="hero-glow hero-glow-1" />
         <div className="hero-glow hero-glow-2" />
         <div className="hero-glow hero-glow-3" />
@@ -386,6 +387,7 @@ function LandingPage({ onEnterApp, onOpenAuthModal, currentUser, onSelectFeature
           <p className="cta-disclaimer">⚠️ Not Professional Legal Advice — Consult a Qualified Attorney for Legal Guidance</p>
         </div>
       </section>
+      </main>
 
       {/* ── Footer ── */}
       <footer className="landing-footer">

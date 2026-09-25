@@ -8,6 +8,16 @@ function RedlineCopilot({ riskFlag, documentText, onClose }) {
   const [copied, setCopied] = useState(false);
 
   React.useEffect(() => {
+    function handleKeyDown(e) {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
+  React.useEffect(() => {
     if (riskFlag) {
       handleGenerate();
     }

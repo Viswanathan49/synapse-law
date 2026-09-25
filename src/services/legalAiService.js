@@ -8,6 +8,7 @@
 import { generateJSON, generateVisionJSON } from './geminiClient.js';
 import { sanitizePII } from '../utils/piiSanitizer.js';
 import { validateQAResponse, validateRiskResponse } from '../utils/hallucinationGuard.js';
+import { validateAndCleanLegalText } from '../utils/promptInjectionGuard.js';
 
 const LEGAL_DISCLAIMER =
   'Not Professional Legal Advice — For Informational Purposes Only. ' +
@@ -348,7 +349,8 @@ function buildDynamicBrief(text, riskData) {
 // ─────────────────────────────────────────────────────────────
 
 export async function simplifyDocument(text, mode = 'clauses') {
-  const { sanitized } = sanitizePII(text);
+  const { sanitized: piiClean } = sanitizePII(text);
+  const { text: sanitized } = validateAndCleanLegalText(piiClean);
 
   const modeInstructions = {
     eli5: 'Explain this as if talking to a 12-year-old. Use simple words, short sentences, and everyday analogies.',
@@ -389,7 +391,8 @@ Return ONLY valid JSON matching this exact schema:
 }
 
 export async function scanRisks(text) {
-  const { sanitized } = sanitizePII(text);
+  const { sanitized: piiClean } = sanitizePII(text);
+  const { text: sanitized } = validateAndCleanLegalText(piiClean);
 
   const prompt = `You are a senior legal risk analyst specializing in contract review. ${GROUNDING_INSTRUCTION}
 
@@ -427,8 +430,10 @@ Return ONLY valid JSON:
 }
 
 export async function compareContracts(textA, textB) {
-  const { sanitized: sA } = sanitizePII(textA);
-  const { sanitized: sB } = sanitizePII(textB);
+  const { sanitized: piiA } = sanitizePII(textA);
+  const { text: sA } = validateAndCleanLegalText(piiA);
+  const { sanitized: piiB } = sanitizePII(textB);
+  const { text: sB } = validateAndCleanLegalText(piiB);
 
   const prompt = `You are a contract comparison specialist. ${GROUNDING_INSTRUCTION}
 
@@ -450,8 +455,10 @@ Return ONLY valid JSON matching expected schema.`;
 }
 
 export async function answerQuestion(text, question) {
-  const { sanitized } = sanitizePII(text);
-  const { sanitized: sanitizedQ } = sanitizePII(question);
+  const { sanitized: piiClean } = sanitizePII(text);
+  const { text: sanitized } = validateAndCleanLegalText(piiClean);
+  const { sanitized: piiCleanQ } = sanitizePII(question);
+  const { text: sanitizedQ } = validateAndCleanLegalText(piiCleanQ);
 
   const prompt = `You are a precise legal document analyst with zero tolerance for hallucination. ${GROUNDING_INSTRUCTION}
 
@@ -485,7 +492,8 @@ Return ONLY valid JSON:
 }
 
 export async function generateBrief(text, riskData = null) {
-  const { sanitized } = sanitizePII(text);
+  const { sanitized: piiClean } = sanitizePII(text);
+  const { text: sanitized } = validateAndCleanLegalText(piiClean);
 
   const prompt = `You are a paralegal preparing a lawyer consultation brief. ${GROUNDING_INSTRUCTION}
 
