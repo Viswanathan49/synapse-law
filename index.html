@@ -4,6 +4,50 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Security Headers ─────────────────────────────────────────── -->
+    <!--
+      Content Security Policy:
+      - default-src 'self'           → only load resources from same origin
+      - script-src 'self' 'unsafe-inline' → Vite dev hmr requires inline scripts in dev;
+                                            production build uses hashed scripts
+      - style-src 'self' 'unsafe-inline' fonts.googleapis.com → Google Fonts + inline styles
+      - font-src 'self' fonts.gstatic.com data:               → Google Fonts glyphs
+      - connect-src 'self' https://*.googleapis.com https://*.generativelanguage.googleapis.com
+                                            → Gemini API calls only
+      - img-src 'self' data: blob:    → blob: for canvas/pdf.js, data: for base64 images
+      - object-src 'none'            → no plugins (Flash, etc.)
+      - base-uri 'self'              → prevent base tag injection
+      - form-action 'self'           → prevent form hijack
+      - frame-ancestors 'none'       → prevent clickjacking via iframes
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
+        default-src 'self';
+        script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:;
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+        font-src 'self' https://fonts.gstatic.com data:;
+        connect-src 'self' https://*.googleapis.com https://generativelanguage.googleapis.com;
+        img-src 'self' data: blob:;
+        worker-src 'self' blob:;
+        object-src 'none';
+        base-uri 'self';
+        form-action 'self';
+        frame-ancestors 'none';
+      "
+    />
+    <!-- Prevent MIME-type sniffing -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <!-- Restrict referrer information leakage -->
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <!-- Disable potentially privacy-invasive browser features -->
+    <meta
+      http-equiv="Permissions-Policy"
+      content="camera=(), microphone=(self), geolocation=(), payment=()"
+    />
+    <!-- ──────────────────────────────────────────────────────────────── -->
+
     <meta name="description" content="LexiGuard AI — GenAI-powered legal document analysis, risk detection, contract comparison, and lawyer preparation. For informational purposes only." />
     <meta name="keywords" content="legal AI, contract analysis, risk detection, legal document simplifier, lawyer brief" />
     <meta property="og:title" content="LexiGuard AI — Smart Legal Document Analysis" />

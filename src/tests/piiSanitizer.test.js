@@ -116,4 +116,67 @@ describe('PII Sanitizer', () => {
       expect(containsPII('Standard legal terms apply.')).toBe(false);
     });
   });
+
+  // ── Security Edge Cases ──
+  describe('Security hardening edge cases', () => {
+    it('handles XSS injection strings without throwing', () => {
+      const xss = '<script>alert("xss")</script> SSN: 123-45-6789';
+      const { sanitized } = sanitizePII(xss);
+      // Script tag itself is not PII but SSN should still be redacted
+      expect(sanitized).toContain('[SSN_REDACTED]');
+      expect(sanitized).not.toContain('123-45-6789');
+    });
+
+    it('handles SQL injection strings without throwing', () => {
+      const sql = "'; DROP TABLE users; -- email: injector@evil.com";
+      expect(() => sanitizePII(sql)).not.toThrow();
+      const { sanitized } = sanitizePII(sql);
+      expect(sanitized).toContain('[EMAIL_REDACTED]');
+    });
+
+    it('handles very long input (50,000 chars) without hanging', () => {
+      const longText = 'Normal legal text. '.repeat(2631) + 'SSN: 999-88-7777';
+      const { sanitized, redactedCount } = sanitizePII(longText);
+      expect(redactedCount).toBeGreaterThanOrEqual(1);
+      expect(sanitized).not.toContain('999-88-7777');
+    });
+
+    it('handles undefined input gracefully', () => {
+      const { sanitized, redactedCount } = sanitizePII(undefined);
+      expect(sanitized).toBe('');
+      expect(redactedCount).toBe(0);
+    });
+
+    it('handles numeric input without throwing', () => {
+      expect(() => sanitizePII(12345)).not.toThrow();
+    });
+
+    it('redacts SSN embedded in JSON-like string', () => {
+      const json = '{"ssn":"123-45-6789","name":"John"}';
+      const { sanitized } = sanitizePII(json);
+      expect(sanitized).not.toContain('123-45-6789');
+    });
+
+    it('redacts email inside URL-like string', () => {
+      const url = 'mailto:attacker@evil.com?subject=Hello';
+      const { sanitized } = sanitizePII(url);
+      expect(sanitized).not.toContain('attacker@evil.com');
+    });
+
+    it('containsPII handles null gracefully', () => {
+      expect(containsPII(null)).toBe(false);
+    });
+
+    it('containsPII handles empty string', () => {
+      expect(containsPII('')).toBe(false);
+    });
+
+    it('does not modify non-PII Unicode text', () => {
+      const unicode = '法律文件 — Правовой документ — القانونية';
+      const { sanitized, redactedCount } = sanitizePII(unicode);
+      expect(redactedCount).toBe(0);
+      expect(sanitized).toBe(unicode);
+    });
+  });
 });
+
