@@ -48,50 +48,86 @@ export async function exportToPDF(element, filename = 'lexiguard-brief.pdf') {
       useCORS: true,
       logging: false,
       onclone: (clonedDoc, clonedElement) => {
-        // 1. Inject light-mode overriding stylesheet into the cloned document
+        // 1. Inject print stylesheet into cloned document
         const style = clonedDoc.createElement('style');
         style.id = 'pdf-light-export-styles';
         style.textContent = `
-          body {
+          *, *::before, *::after {
+            animation: none !important;
+            transition: none !important;
+            opacity: 1 !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            filter: none !important;
+            text-shadow: none !important;
+            box-shadow: none !important;
+          }
+          :root, html, body {
             background-color: #FFFFFF !important;
-            color: #0F172A !important;
+            color: #000000 !important;
+            --bg-primary: #FFFFFF !important;
+            --bg-secondary: #F8FAFC !important;
+            --bg-tertiary: #F1F5F9 !important;
+            --glass-bg: #FFFFFF !important;
+            --glass-border: #CBD5E1 !important;
+            --text-primary: #000000 !important;
+            --text-secondary: #1F2937 !important;
+            --text-muted: #4B5563 !important;
+            --brand-primary: #1D4ED8 !important;
           }
           .pdf-export-root {
             background-color: #FFFFFF !important;
-            color: #0F172A !important;
-            padding: 24px !important;
+            color: #000000 !important;
+            padding: 16px !important;
           }
           .glass-card, [class*="glass-card"] {
             background-color: #FFFFFF !important;
             border: 1px solid #CBD5E1 !important;
-            color: #0F172A !important;
+            border-radius: 8px !important;
+            color: #000000 !important;
           }
-          h1, h2, h3, h4, h5, h6, strong, b {
-            color: #0F172A !important;
+          h1, h2, h3, h4, h5, h6, strong, b, th {
+            color: #000000 !important;
+            font-weight: 700 !important;
           }
-          p, li, span, div {
-            color: #1E293B !important;
+          p, li, td {
+            color: #1F2937 !important;
           }
           .quote-block, blockquote, pre, code {
             background-color: #F8FAFC !important;
-            border-left: 3px solid #2563EB !important;
+            border-left: 4px solid #1D4ED8 !important;
+            border-top: 1px solid #E2E8F0 !important;
+            border-right: 1px solid #E2E8F0 !important;
+            border-bottom: 1px solid #E2E8F0 !important;
             color: #0F172A !important;
             padding: 12px 16px !important;
           }
           .divider, hr {
-            background-color: #E2E8F0 !important;
+            background-color: #CBD5E1 !important;
             border: none !important;
             height: 1px !important;
           }
-          .text-muted {
-            color: #64748B !important;
+          .badge-crimson {
+            color: #991B1B !important;
+            background-color: #FEF2F2 !important;
+            border: 1.5px solid #DC2626 !important;
+            font-weight: 700 !important;
           }
-          .text-secondary {
-            color: #334155 !important;
+          .badge-amber {
+            color: #92400E !important;
+            background-color: #FFFBEB !important;
+            border: 1.5px solid #D97706 !important;
+            font-weight: 700 !important;
+          }
+          .badge-emerald {
+            color: #166534 !important;
+            background-color: #F0FDF4 !important;
+            border: 1.5px solid #16A34A !important;
+            font-weight: 700 !important;
           }
           .disclaimer-banner {
             background-color: #FFFBEB !important;
-            border: 1px solid #F59E0B !important;
+            border: 1px solid #D97706 !important;
             color: #92400E !important;
           }
         `;
@@ -99,28 +135,92 @@ export async function exportToPDF(element, filename = 'lexiguard-brief.pdf') {
 
         // 2. Normalize root element
         clonedElement.classList.add('pdf-export-root');
-        clonedElement.style.background = '#FFFFFF';
-        clonedElement.style.color = '#0F172A';
+        clonedElement.classList.remove('animate-fadeInUp', 'animate-fadeIn', 'animate-slideInRight');
+        clonedElement.style.setProperty('background', '#FFFFFF', 'important');
+        clonedElement.style.setProperty('color', '#000000', 'important');
+        clonedElement.style.setProperty('opacity', '1', 'important');
 
-        // 3. Deep-normalize inline styles to avoid dark-theme remnants
-        const allNodes = clonedElement.querySelectorAll('*');
+        // 3. Deep-traverse and apply solid ink colors and clean borders to all elements
+        const allNodes = [clonedElement, ...clonedElement.querySelectorAll('*')];
         allNodes.forEach((node) => {
-          // If cover header gradient is detected, convert to light executive tint
-          if (node.style.background && node.style.background.includes('linear-gradient')) {
-            node.style.background = 'linear-gradient(135deg, #F0F7FF, #FAF5FF)';
-            node.style.borderColor = '#BFDBFE';
+          // Zero out animation, blur, and opacity
+          node.style.setProperty('animation', 'none', 'important');
+          node.style.setProperty('transition', 'none', 'important');
+          node.style.setProperty('opacity', '1', 'important');
+          node.style.setProperty('backdrop-filter', 'none', 'important');
+          node.style.setProperty('-webkit-backdrop-filter', 'none', 'important');
+          node.style.setProperty('filter', 'none', 'important');
+          node.style.setProperty('text-shadow', 'none', 'important');
+
+          const tag = node.tagName ? node.tagName.toLowerCase() : '';
+
+          // Headings get ink black
+          if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'strong', 'b', 'th'].includes(tag)) {
+            node.style.setProperty('color', '#000000', 'important');
+          } else if (['p', 'li', 'td'].includes(tag)) {
+            node.style.setProperty('color', '#1F2937', 'important');
           }
-          // Force light text colors to crisp dark slate
-          const clr = node.style.color;
-          if (clr && (clr.includes('210') || clr.includes('215') || clr.includes('#fff') || clr.includes('#e6') || clr.includes('#8b') || clr.includes('white'))) {
-            node.style.color = '#1E293B';
-          }
-          // Force dark background containers to soft light slate
+
+          // Cover card gradient -> clean solid light card
           const bg = node.style.background || node.style.backgroundColor;
-          if (bg && (bg.includes('var(--bg-') || bg.includes('var(--glass-') || bg.includes('#0d') || bg.includes('#16') || bg.includes('hsl(222'))) {
-            node.style.background = '#F8FAFC';
-            node.style.borderColor = '#E2E8F0';
-            node.style.color = '#0F172A';
+          if (bg && bg.includes('linear-gradient')) {
+            node.style.setProperty('background', '#F8FAFC', 'important');
+            node.style.setProperty('border', '1px solid #CBD5E1', 'important');
+          } else if (bg && (bg.includes('var(--bg-') || bg.includes('hsl(222') || bg.includes('#0d') || bg.includes('#16'))) {
+            node.style.setProperty('background', '#F8FAFC', 'important');
+            node.style.setProperty('border', '1px solid #E2E8F0', 'important');
+            node.style.setProperty('color', '#111827', 'important');
+          }
+
+          // Glass cards
+          if (node.classList && node.classList.contains('glass-card')) {
+            node.style.setProperty('background', '#FFFFFF', 'important');
+            node.style.setProperty('border', '1px solid #CBD5E1', 'important');
+            node.style.setProperty('box-shadow', 'none', 'important');
+          }
+
+          // Secondary party / date blocks
+          if (node.style.background && node.style.background.includes('var(--bg-secondary)')) {
+            node.style.setProperty('background', '#F8FAFC', 'important');
+            node.style.setProperty('border', '1px solid #E2E8F0', 'important');
+            node.style.setProperty('color', '#111827', 'important');
+          }
+
+          // Inline color overrides
+          const inlineClr = node.style.color;
+          if (inlineClr) {
+            if (inlineClr.includes('var(--text-secondary)') || inlineClr.includes('var(--text-muted)')) {
+              node.style.setProperty('color', '#374151', 'important');
+            } else if (inlineClr.includes('var(--text-primary)') || inlineClr.includes('white') || inlineClr.includes('#fff') || inlineClr.includes('210') || inlineClr.includes('215')) {
+              node.style.setProperty('color', '#000000', 'important');
+            } else if (inlineClr.includes('var(--brand-primary)')) {
+              node.style.setProperty('color', '#1D4ED8', 'important');
+            } else if (inlineClr.includes('var(--risk-crimson)')) {
+              node.style.setProperty('color', '#991B1B', 'important');
+            } else if (inlineClr.includes('var(--risk-amber)')) {
+              node.style.setProperty('color', '#92400E', 'important');
+            }
+          }
+
+          // Quote blocks
+          if (node.classList && (node.classList.contains('quote-block') || tag === 'blockquote')) {
+            node.style.setProperty('background', '#F8FAFC', 'important');
+            node.style.setProperty('border-left', '4px solid #1D4ED8', 'important');
+            node.style.setProperty('color', '#0F172A', 'important');
+          }
+
+          // Danger blocks
+          if (node.style.background && node.style.background.includes('var(--risk-crimson-bg)')) {
+            node.style.setProperty('background', '#FEF2F2', 'important');
+            node.style.setProperty('border', '1px solid #FECACA', 'important');
+            node.style.setProperty('color', '#991B1B', 'important');
+          }
+
+          // Warning blocks
+          if (node.style.background && node.style.background.includes('var(--risk-amber-bg)')) {
+            node.style.setProperty('background', '#FFFBEB', 'important');
+            node.style.setProperty('border', '1px solid #FDE68A', 'important');
+            node.style.setProperty('color', '#92400E', 'important');
           }
         });
       },

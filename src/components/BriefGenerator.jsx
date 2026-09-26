@@ -108,7 +108,8 @@ function BriefGenerator({ documentText, riskData }) {
           </div>
 
           {/* Brief Content */}
-          <div ref={briefRef} className="animate-fadeInUp" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div className="animate-fadeInUp">
+            <div ref={briefRef} id="brief-export-container" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {/* Cover */}
             <div className="glass-card" style={{ padding: '28px', background: 'linear-gradient(135deg, hsla(217,91%,60%,0.08), hsla(258,80%,65%,0.08))', borderColor: 'hsla(217,91%,60%,0.2)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
@@ -227,6 +228,7 @@ function BriefGenerator({ documentText, riskData }) {
               <span style={{ color: 'var(--risk-amber)' }}>
                 <strong>IMPORTANT:</strong> {brief.disclaimer}
               </span>
+            </div>
             </div>
           </div>
         </>
