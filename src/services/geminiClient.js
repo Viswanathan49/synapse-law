@@ -32,10 +32,10 @@ export function isValidGeminiKey(key) {
 }
 
 if (!API_KEY) {
-  console.info('[LexiGuard] VITE_GEMINI_API_KEY is not set. Intelligent local legal analysis engine is active.');
+  console.info('[Synapse Law] VITE_GEMINI_API_KEY is not set. Intelligent local legal analysis engine is active.');
 } else if (!isValidGeminiKey(API_KEY)) {
   console.warn(
-    `[LexiGuard] VITE_GEMINI_API_KEY is set but does not match standard Gemini API key format ` +
+    `[Synapse Law] VITE_GEMINI_API_KEY is set but does not match standard Gemini API key format ` +
     `(Google AI Studio keys start with 'AIzaSy...'). ` +
     `Live API calls may fail and fall back to local AI analysis.`
   );
@@ -174,7 +174,7 @@ export async function generateJSON(prompt, fallback = null) {
     return parseModelJSON(text);
   } catch (error) {
     // Log a sanitised error message — never the full stack trace in production
-    console.warn('[LexiGuard] Gemini API notice:', error.message || 'Unknown error');
+    console.warn('[Synapse Law] Gemini API notice:', error.message || 'Unknown error');
     if (typeof fallback === 'function') return fallback();
     if (fallback !== null) return fallback;
     throw new Error('Analysis service temporarily unavailable. Please try again.');
@@ -221,7 +221,7 @@ export async function generateVisionJSON(textPrompt, base64Image, mimeType, fall
     const text = result.response.text();
     return parseModelJSON(text);
   } catch (error) {
-    console.warn('[LexiGuard] Gemini Vision API notice:', error.message || 'Unknown error');
+    console.warn('[Synapse Law] Gemini Vision API notice:', error.message || 'Unknown error');
     if (typeof fallback === 'function') return fallback();
     if (fallback !== null) return fallback;
     throw new Error('Vision analysis service temporarily unavailable.');

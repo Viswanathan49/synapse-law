@@ -96,7 +96,7 @@ function LegalDashboard({ onBackToLanding, currentUser, onOpenAuthModal, onLogou
           <span style={{ fontSize: '1.5rem' }}>⚖️</span>
           <div>
             <span style={{ fontWeight: 800, fontSize: '1.125rem', background: 'var(--brand-gradient)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-              LexiGuard AI
+              Synapse Law
             </span>
             <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginLeft: '8px' }} className="hide-mobile">Legal Intelligence</span>
           </div>

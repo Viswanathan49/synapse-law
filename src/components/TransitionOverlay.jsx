@@ -49,7 +49,7 @@ function TransitionOverlay({ isVisible, user, onComplete }) {
           <div className="transition-glow-ring" />
         </div>
 
-        <h3 className="transition-heading">Entering LexiGuard Vault</h3>
+        <h3 className="transition-heading">Entering Synapse Law Vault</h3>
         {user && (
           <div className="transition-user-badge">
             <span>{user.avatar || '👤'}</span>

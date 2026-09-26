@@ -1,5 +1,5 @@
 /**
- * legalAiService.test.js — Tests for the LexiGuard legal AI service.
+ * legalAiService.test.js — Tests for the Synapse Law legal AI service.
  *
  * All Gemini API calls are mocked to resolve to a simulated failure so the
  * tests exercise the deterministic local-fallback engine, which must always

@@ -18,7 +18,7 @@ function BriefGenerator({ documentText, riskData }) {
       const data = await generateBrief(documentText, riskData);
       setBrief(data);
     } catch (err) {
-      console.error('[LexiGuard] Brief generation error:', err);
+      console.error('[Synapse Law] Brief generation error:', err);
       setError('Unable to generate lawyer consultation brief. Please try again with valid document text.');
     } finally {
       setLoading(false);
@@ -29,9 +29,9 @@ function BriefGenerator({ documentText, riskData }) {
     if (!briefRef.current || !brief) return;
     setExporting('pdf');
     try {
-      await exportToPDF(briefRef.current, `lexiguard-brief-${Date.now()}.pdf`);
+      await exportToPDF(briefRef.current, `synapse-law-brief-${Date.now()}.pdf`);
     } catch (err) {
-      console.error('[LexiGuard] PDF export error:', err);
+      console.error('[Synapse Law] PDF export error:', err);
       setError('PDF export failed. Please verify browser print permissions and try again.');
     } finally {
       setExporting(null);
@@ -42,9 +42,9 @@ function BriefGenerator({ documentText, riskData }) {
     if (!brief) return;
     setExporting('ppt');
     try {
-      await exportToPPT(brief, riskData, `lexiguard-brief-${Date.now()}.pptx`);
+      await exportToPPT(brief, riskData, `synapse-law-brief-${Date.now()}.pptx`);
     } catch (err) {
-      console.error('[LexiGuard] PPT export error:', err);
+      console.error('[Synapse Law] PPT export error:', err);
       setError('PowerPoint export failed. Please verify file download permissions and try again.');
     } finally {
       setExporting(null);
@@ -115,7 +115,7 @@ function BriefGenerator({ documentText, riskData }) {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
                 <div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--brand-primary)', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '8px' }}>
-                    ⚖️ LexiGuard AI — Lawyer Preparation Brief
+                    ⚖️ Synapse Law — Lawyer Preparation Brief
                   </div>
                   <h2 style={{ marginBottom: '4px' }}>{brief.documentTitle}</h2>
                   <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{brief.documentType}</p>

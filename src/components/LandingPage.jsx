@@ -123,7 +123,7 @@ function LandingPage({ onEnterApp, onOpenAuthModal, currentUser, onSelectFeature
         <div className="landing-nav-inner">
           <div className="landing-logo">
             <span className="landing-logo-icon">⚖️</span>
-            <span className="landing-logo-text">LexiGuard AI</span>
+            <span className="landing-logo-text">Synapse Law</span>
           </div>
           <div className="landing-nav-links">
             <a href="#features">Features</a>
@@ -168,7 +168,7 @@ function LandingPage({ onEnterApp, onOpenAuthModal, currentUser, onSelectFeature
           </h1>
 
           <p className="hero-subtitle">
-            Upload any contract, lease, or terms of service. LexiGuard AI simplifies it,
+            Upload any contract, lease, or terms of service. Synapse Law simplifies it,
             scores its risk, compares versions, and prepares you for your attorney — all
             with zero hallucinations and full PII protection.
           </p>
@@ -382,7 +382,7 @@ function LandingPage({ onEnterApp, onOpenAuthModal, currentUser, onSelectFeature
             and lawyer preparation brief — all in one place.
           </p>
           <button id="cta-enter-app" className="btn btn-primary btn-lg cta-btn" onClick={onEnterApp}>
-            ⚡ Launch LexiGuard AI Free
+            ⚡ Launch Synapse Law Free
           </button>
           <p className="cta-disclaimer">⚠️ Not Professional Legal Advice — Consult a Qualified Attorney for Legal Guidance</p>
         </div>
@@ -395,7 +395,7 @@ function LandingPage({ onEnterApp, onOpenAuthModal, currentUser, onSelectFeature
           <div className="footer-inner">
             <div className="landing-logo">
               <span className="landing-logo-icon">⚖️</span>
-              <span className="landing-logo-text">LexiGuard AI</span>
+              <span className="landing-logo-text">Synapse Law</span>
             </div>
             <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
               Powered by Google Gemini 1.5 Pro · Built for the GenAI Hackathon

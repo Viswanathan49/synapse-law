@@ -1,5 +1,5 @@
 /**
- * authService.test.js — Comprehensive tests for the LexiGuard authentication
+ * authService.test.js — Comprehensive tests for the Synapse Law authentication
  * and memory vault service.
  *
  * All localStorage interactions are mocked via a Map-backed fake implementation

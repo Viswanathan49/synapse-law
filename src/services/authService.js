@@ -1,5 +1,5 @@
 /**
- * LexiGuard AI — User Authentication & Memory Storage Service
+ * Synapse Law — User Authentication & Memory Storage Service
  *
  * Security implementation:
  * - All persisted data is encrypted with AES-GCM-256 via the Web Crypto API.
@@ -115,12 +115,12 @@ const SEED_MEMORIES = {
 
 // ─── Storage Keys ─────────────────────────────────────────────────────────────
 
-const KEY_ACTIVE_USER    = 'lexiguard_active_user';
-const KEY_CUSTOM_USERS   = 'lexiguard_custom_users';
-const KEY_DEVICE_SALT    = 'lexiguard_device_salt';
+const KEY_ACTIVE_USER    = 'synapselaw_active_user';
+const KEY_CUSTOM_USERS   = 'synapselaw_custom_users';
+const KEY_DEVICE_SALT    = 'synapselaw_device_salt';
 
 /** @param {string} userId @returns {string} */
-const KEY_USER_MEMORIES  = (userId) => `lexiguard_memories_${userId}`;
+const KEY_USER_MEMORIES  = (userId) => `synapselaw_memories_${userId}`;
 
 // ─── ID Generation ────────────────────────────────────────────────────────────
 
@@ -183,7 +183,7 @@ async function getDeviceKey() {
     const encoder = new TextEncoder();
     const keyMaterial = await crypto.subtle.importKey(
       'raw',
-      encoder.encode('LexiGuard-AES-GCM-v1'),
+      encoder.encode('SynapseLaw-AES-GCM-v1'),
       'PBKDF2',
       false,
       ['deriveKey'],
@@ -310,11 +310,11 @@ function storageSet(key, value) {
         localStorage.setItem(key, cipherB64);
       } catch (e) {
         if (e instanceof DOMException && e.name === 'QuotaExceededError') {
-          console.warn('[LexiGuard] localStorage quota exceeded — encrypted save skipped.');
+          console.warn('[Synapse Law] localStorage quota exceeded — encrypted save skipped.');
         }
       }
     })
-    .catch((e) => console.error('[LexiGuard] AES-GCM encryption error:', e));
+    .catch((e) => console.error('[Synapse Law] AES-GCM encryption error:', e));
 }
 
 /**
@@ -344,7 +344,7 @@ async function warmCache() {
       }),
     );
   } catch (e) {
-    console.warn('[LexiGuard] Cache warm-up error (non-fatal):', e);
+    console.warn('[Synapse Law] Cache warm-up error (non-fatal):', e);
   }
 }
 
@@ -391,7 +391,7 @@ export const authService = {
       _memoryStore.delete(KEY_ACTIVE_USER);
       localStorage.removeItem(KEY_ACTIVE_USER);
     } catch (e) {
-      console.error('[LexiGuard] Error clearing user session:', e);
+      console.error('[Synapse Law] Error clearing user session:', e);
     }
   },
 
@@ -533,7 +533,7 @@ export const authService = {
       storageSet(KEY_USER_MEMORIES(userId), updated);
       return true;
     } catch (e) {
-      console.error('[LexiGuard] Error saving memory item:', e);
+      console.error('[Synapse Law] Error saving memory item:', e);
       return false;
     }
   },
@@ -554,7 +554,7 @@ export const authService = {
       storageSet(KEY_USER_MEMORIES(userId), updated);
       return true;
     } catch (e) {
-      console.error('[LexiGuard] Error deleting memory item:', e);
+      console.error('[Synapse Law] Error deleting memory item:', e);
       return false;
     }
   },

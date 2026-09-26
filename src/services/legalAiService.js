@@ -435,7 +435,7 @@ Return ONLY valid JSON:
   const response = await generateJSON(prompt, () => buildDynamicRiskScan(sanitized));
   const { errors } = validateRiskResponse(response);
   if (errors.length > 0) {
-    console.warn('[LexiGuard] Risk response validation warnings:', errors);
+    console.warn('[Synapse Law] Risk response validation warnings:', errors);
   }
   aiResultCache.set(cacheKey, response);
   return response;

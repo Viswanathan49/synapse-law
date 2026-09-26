@@ -39,7 +39,7 @@ class ErrorBoundary extends Component {
    * @param {React.ErrorInfo} info
    */
   componentDidCatch(error, info) {
-    console.error('[LexiGuard ErrorBoundary]', {
+    console.error('[Synapse Law ErrorBoundary]', {
       errorId: this.state.errorId,
       message: error?.message,
       stack: isDev() ? error?.stack : '[stack hidden in production]',

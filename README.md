@@ -1,9 +1,9 @@
-# 🏛️ LexiGuard AI — Legal Intelligence Platform
+# 🏛️ Synapse Law — Legal Intelligence Platform
 
 > AI-powered contract analysis, risk scanning, and plain-English simplification for legal professionals.  
 > Built with **React 18 + Vite**, powered by the **Google Gemini API**, with a deterministic fallback engine for 100% offline operation.
 
-[![Tests](https://img.shields.io/badge/tests-205%20passing-brightgreen)](src/tests/)
+[![Tests](https://img.shields.io/badge/tests-234%20passing-brightgreen)](src/tests/)
 [![Security](https://img.shields.io/badge/npm%20audit-0%20vulnerabilities-brightgreen)](package.json)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
@@ -408,8 +408,8 @@ npx serve dist
 
 ## 📜 License
 
-MIT © 2026 LexiGuard AI — Built for the PromptWars Hackathon
+MIT © 2026 Synapse Law — Built for the PromptWars Hackathon
 
 ---
 
-> **Legal Disclaimer:** LexiGuard AI is an informational tool only and does not constitute legal advice. Always consult a qualified attorney for legal guidance.
+> **Legal Disclaimer:** Synapse Law is an informational tool only and does not constitute legal advice. Always consult a qualified attorney for legal guidance.

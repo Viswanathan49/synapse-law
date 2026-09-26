@@ -85,7 +85,7 @@ function AuthModal({ isOpen, onClose, onLoginSuccess }) {
           <div className="auth-logo-badge">
             <span className="auth-logo-icon">⚖️</span>
             <div>
-              <div className="auth-logo-title" id="auth-modal-title">LexiGuard Vault Login</div>
+              <div className="auth-logo-title" id="auth-modal-title">Synapse Law Vault Login</div>
               <div className="auth-logo-sub">Client-Side Encrypted & PII scrubbed</div>
             </div>
           </div>
