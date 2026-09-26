@@ -18,7 +18,8 @@ function BriefGenerator({ documentText, riskData }) {
       const data = await generateBrief(documentText, riskData);
       setBrief(data);
     } catch (err) {
-      setError(err.message);
+      console.error('[LexiGuard] Brief generation error:', err);
+      setError('Unable to generate lawyer consultation brief. Please try again with valid document text.');
     } finally {
       setLoading(false);
     }
@@ -30,7 +31,8 @@ function BriefGenerator({ documentText, riskData }) {
     try {
       await exportToPDF(briefRef.current, `lexiguard-brief-${Date.now()}.pdf`);
     } catch (err) {
-      setError(`PDF export: ${err.message}`);
+      console.error('[LexiGuard] PDF export error:', err);
+      setError('PDF export failed. Please verify browser print permissions and try again.');
     } finally {
       setExporting(null);
     }
@@ -42,7 +44,8 @@ function BriefGenerator({ documentText, riskData }) {
     try {
       await exportToPPT(brief, riskData, `lexiguard-brief-${Date.now()}.pptx`);
     } catch (err) {
-      setError(`PPT export: ${err.message}`);
+      console.error('[LexiGuard] PPT export error:', err);
+      setError('PowerPoint export failed. Please verify file download permissions and try again.');
     } finally {
       setExporting(null);
     }
