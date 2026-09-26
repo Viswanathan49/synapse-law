@@ -9,6 +9,7 @@ import { generateJSON, generateVisionJSON } from './geminiClient.js';
 import { sanitizePII } from '../utils/piiSanitizer.js';
 import { validateQAResponse, validateRiskResponse } from '../utils/hallucinationGuard.js';
 import { validateAndCleanLegalText } from '../utils/promptInjectionGuard.js';
+import { aiResultCache, buildCacheKey } from './cacheService.js';
 
 const LEGAL_DISCLAIMER =
   'Not Professional Legal Advice — For Informational Purposes Only. ' +
@@ -352,6 +353,10 @@ export async function simplifyDocument(text, mode = 'clauses') {
   const { sanitized: piiClean } = sanitizePII(text);
   const { text: sanitized } = validateAndCleanLegalText(piiClean);
 
+  const cacheKey = buildCacheKey('simplify', sanitized.slice(0, 2000), mode);
+  const cached = aiResultCache.get(cacheKey);
+  if (cached) return cached;
+
   const modeInstructions = {
     eli5: 'Explain this as if talking to a 12-year-old. Use simple words, short sentences, and everyday analogies.',
     executive: 'Provide a concise executive summary for a C-suite audience. Focus on key parties, obligations, financial terms, dates, and risk exposure.',
@@ -387,12 +392,18 @@ Return ONLY valid JSON matching this exact schema:
   "disclaimer": "${LEGAL_DISCLAIMER}"
 }`;
 
-  return generateJSON(prompt, () => buildDynamicSimplifier(sanitized, mode));
+  const result = await generateJSON(prompt, () => buildDynamicSimplifier(sanitized, mode));
+  aiResultCache.set(cacheKey, result);
+  return result;
 }
 
 export async function scanRisks(text) {
   const { sanitized: piiClean } = sanitizePII(text);
   const { text: sanitized } = validateAndCleanLegalText(piiClean);
+
+  const cacheKey = buildCacheKey('risks', sanitized.slice(0, 2000));
+  const cached = aiResultCache.get(cacheKey);
+  if (cached) return cached;
 
   const prompt = `You are a senior legal risk analyst specializing in contract review. ${GROUNDING_INSTRUCTION}
 
@@ -426,6 +437,7 @@ Return ONLY valid JSON:
   if (errors.length > 0) {
     console.warn('[LexiGuard] Risk response validation warnings:', errors);
   }
+  aiResultCache.set(cacheKey, response);
   return response;
 }
 
@@ -434,6 +446,10 @@ export async function compareContracts(textA, textB) {
   const { text: sA } = validateAndCleanLegalText(piiA);
   const { sanitized: piiB } = sanitizePII(textB);
   const { text: sB } = validateAndCleanLegalText(piiB);
+
+  const cacheKey = buildCacheKey('compare', sA.slice(0, 2000), sB.slice(0, 2000));
+  const cached = aiResultCache.get(cacheKey);
+  if (cached) return cached;
 
   const prompt = `You are a contract comparison specialist. ${GROUNDING_INSTRUCTION}
 
@@ -451,7 +467,9 @@ ${sB.slice(0, 25000)}
 
 Return ONLY valid JSON matching expected schema.`;
 
-  return generateJSON(prompt, () => buildDynamicComparator(sA, sB));
+  const result = await generateJSON(prompt, () => buildDynamicComparator(sA, sB));
+  aiResultCache.set(cacheKey, result);
+  return result;
 }
 
 export async function answerQuestion(text, question) {
@@ -459,6 +477,10 @@ export async function answerQuestion(text, question) {
   const { text: sanitized } = validateAndCleanLegalText(piiClean);
   const { sanitized: piiCleanQ } = sanitizePII(question);
   const { text: sanitizedQ } = validateAndCleanLegalText(piiCleanQ);
+
+  const cacheKey = buildCacheKey('qa', sanitized.slice(0, 2000), sanitizedQ);
+  const cached = aiResultCache.get(cacheKey);
+  if (cached) return cached;
 
   const prompt = `You are a precise legal document analyst with zero tolerance for hallucination. ${GROUNDING_INSTRUCTION}
 
@@ -484,16 +506,22 @@ Return ONLY valid JSON:
   const response = await generateJSON(prompt, () => buildDynamicQA(sanitized, sanitizedQ));
   const validation = validateQAResponse(response, sanitized);
 
-  return {
+  const result = {
     ...response,
     _validation: validation,
     hallucination_warning: response.hallucination_warning || !validation.verified,
   };
+  aiResultCache.set(cacheKey, result);
+  return result;
 }
 
 export async function generateBrief(text, riskData = null) {
   const { sanitized: piiClean } = sanitizePII(text);
   const { text: sanitized } = validateAndCleanLegalText(piiClean);
+
+  const cacheKey = buildCacheKey('brief', sanitized.slice(0, 2000));
+  const cached = aiResultCache.get(cacheKey);
+  if (cached) return cached;
 
   const prompt = `You are a paralegal preparing a lawyer consultation brief. ${GROUNDING_INSTRUCTION}
 
@@ -504,7 +532,9 @@ ${sanitized.slice(0, 50000)}
 
 Return ONLY valid JSON matching brief schema.`;
 
-  return generateJSON(prompt, () => buildDynamicBrief(sanitized, riskData));
+  const result = await generateJSON(prompt, () => buildDynamicBrief(sanitized, riskData));
+  aiResultCache.set(cacheKey, result);
+  return result;
 }
 
 export async function generateRedlineClause(riskFlag, documentText) {

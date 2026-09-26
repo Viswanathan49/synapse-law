@@ -1,12 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { compareContracts } from '../services/legalAiService.js';
-import { DiffMatchPatch } from 'diff-match-patch';
+import DiffMatchPatch from 'diff-match-patch';
 import RiskBadge from './RiskBadge.jsx';
 
 function CharDiff({ textA, textB }) {
-  const dmp = new DiffMatchPatch();
-  const diffs = dmp.diff_main(textA || '', textB || '');
-  dmp.diff_cleanupSemantic(diffs);
+  const diffs = useMemo(() => {
+    const dmp = new DiffMatchPatch();
+    const result = dmp.diff_main(textA || '', textB || '');
+    dmp.diff_cleanupSemantic(result);
+    return result;
+  }, [textA, textB]);
+
+  const hasChanges = diffs.some(([op]) => op !== 0);
+
+  if (!hasChanges) {
+    return (
+      <div style={{ padding: '20px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
+        ✅ The two contracts are identical — no character-level differences found.
+      </div>
+    );
+  }
 
   return (
     <div className="font-mono" style={{ fontSize: '0.8125rem', lineHeight: 1.8, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>

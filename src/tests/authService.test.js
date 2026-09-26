@@ -22,6 +22,33 @@ const localStorageMock = {
   key:        (i) => Object.keys(store)[i] ?? null,
 };
 
+// ─── Web Crypto Mock (for AES-GCM-256 encryption layer) ─────────────────────
+// The auth service now encrypts all localStorage writes via crypto.subtle.
+// In jsdom (test environment), we provide a passthrough mock so storage reads
+// and writes still work, allowing all auth logic to be tested normally.
+
+const encoder = new TextEncoder();
+const decoder = new TextDecoder();
+
+const cryptoMock = {
+  getRandomValues: (arr) => {
+    for (let i = 0; i < arr.length; i++) arr[i] = (i * 37 + 7) % 256;
+    return arr;
+  },
+  subtle: {
+    importKey: vi.fn(async () => ({ type: 'raw', mock: true })),
+    deriveKey: vi.fn(async () => ({ type: 'derived', mock: true })),
+    // Passthrough: "encrypt" just JSON-encodes plaintext as base64
+    encrypt: vi.fn(async (_algo, _key, plaintext) => {
+      return plaintext.buffer ?? plaintext;
+    }),
+    // Passthrough: "decrypt" just returns the raw plaintext bytes
+    decrypt: vi.fn(async (_algo, _key, ciphertext) => {
+      return ciphertext;
+    }),
+  },
+};
+
 // ─── Setup / Teardown ─────────────────────────────────────────────────────────
 
 beforeEach(() => {
@@ -31,11 +58,16 @@ beforeEach(() => {
     writable: true,
     configurable: true,
   });
-  // btoa / atob are available natively in Node ≥ 18 (used by the service)
+  Object.defineProperty(globalThis, 'crypto', {
+    value: cryptoMock,
+    writable: true,
+    configurable: true,
+  });
 });
 
 afterEach(() => {
   store = {};
+  vi.clearAllMocks();
 });
 
 // ─── getDemoUsers ─────────────────────────────────────────────────────────────
