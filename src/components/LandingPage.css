@@ -607,13 +607,13 @@
 .footer-author-link {
   color: var(--brand-primary);
   font-weight: 600;
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  text-decoration: none;
   transition: color var(--transition-fast), opacity var(--transition-fast);
 }
 
 .footer-author-link:hover {
   color: var(--brand-secondary);
+  text-decoration: none;
 }
 
 .footer-author-link:focus-visible {
