@@ -603,3 +603,21 @@
   gap: 8px;
   text-align: center;
 }
+
+.footer-author-link {
+  color: var(--brand-primary);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color var(--transition-fast), opacity var(--transition-fast);
+}
+
+.footer-author-link:hover {
+  color: var(--brand-secondary);
+}
+
+.footer-author-link:focus-visible {
+  outline: 2px solid var(--brand-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}

@@ -406,6 +406,14 @@ npx serve dist
 
 ---
 
+## 👨‍💻 Author
+
+**Viswanathan S**
+- 🌐 Portfolio: [viswanathan49.github.io/portfolio](https://viswanathan49.github.io/portfolio/)
+- 💻 GitHub: [@Viswanathan49](https://github.com/Viswanathan49)
+
+---
+
 ## 📜 License
 
 MIT © 2026 Synapse Law — Built for the PromptWars Hackathon

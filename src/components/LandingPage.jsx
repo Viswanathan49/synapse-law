@@ -397,6 +397,17 @@ function LandingPage({ onEnterApp, onOpenAuthModal, currentUser, onSelectFeature
               <span className="landing-logo-icon">⚖️</span>
               <span className="landing-logo-text">Synapse Law</span>
             </div>
+            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+              Created by{' '}
+              <a
+                href="https://viswanathan49.github.io/portfolio/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="footer-author-link"
+              >
+                Viswanathan S
+              </a>
+            </p>
             <p style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
               Powered by Google Gemini 1.5 Pro · Built for the GenAI Hackathon
             </p>
